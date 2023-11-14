@@ -41,7 +41,10 @@ const Layout = ({ children }) => {
         >
           © {new Date().getFullYear()}
           {` `}
-          <a href="https://github.com/mayumih387">mayumih387</a> Built with
+          <a href="https://github.com/mayumih387/streetview-converter">
+            mayumih387
+          </a>{" "}
+          Built with
           {` `}
           <a href="https://www.gatsbyjs.com">Gatsby</a>
         </footer>
