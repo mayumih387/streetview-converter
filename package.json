@@ -1,16 +1,12 @@
 {
-  "name": "gatsby-starter-default",
+  "name": "gatsby-street-view",
   "private": true,
-  "description": "A simple starter to get up and developing quickly with Gatsby",
+  "description": "Automatic rewrite tool for Google Streetview to Maps Embed API format",
   "version": "0.1.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "author": "mayumih387",
   "dependencies": {
     "gatsby": "^5.12.4",
-    "gatsby-plugin-image": "^3.12.0",
     "gatsby-plugin-manifest": "^5.12.0",
-    "gatsby-plugin-sharp": "^5.12.0",
-    "gatsby-source-filesystem": "^5.12.0",
-    "gatsby-transformer-sharp": "^5.12.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -30,11 +26,5 @@
     "clean": "gatsby clean",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-default"
-  },
-  "bugs": {
-    "url": "https://github.com/gatsbyjs/gatsby/issues"
-  }
+  "packageManager": "yarn@4.0.1"
 }

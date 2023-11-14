@@ -1,128 +1,163 @@
-import * as React from "react"
-import { Link } from "gatsby"
-import { StaticImage } from "gatsby-plugin-image"
+import React, { useState, useEffect } from "react"
 
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 import * as styles from "../components/index.module.css"
 
-const links = [
-  {
-    text: "Tutorial",
-    url: "https://www.gatsbyjs.com/docs/tutorial",
-    description:
-      "A great place to get started if you're new to web development. Designed to guide you through setting up your first Gatsby site.",
-  },
-  {
-    text: "Examples",
-    url: "https://github.com/gatsbyjs/gatsby/tree/master/examples",
-    description:
-      "A collection of websites ranging from very basic to complex/complete that illustrate how to accomplish specific tasks within your Gatsby sites.",
-  },
-  {
-    text: "Plugin Library",
-    url: "https://www.gatsbyjs.com/plugins",
-    description:
-      "Learn how to add functionality and customize your Gatsby site or app with thousands of plugins built by our amazing developer community.",
-  },
-  {
-    text: "Build and Host",
-    url: "https://www.gatsbyjs.com/cloud",
-    description:
-      "Now you’re ready to show the world! Give your Gatsby site superpowers: Build and host on Gatsby Cloud. Get started for free!",
-  },
-]
+const IndexPage = () => {
+  const [enteredApi, setEnteredApi] = useState("")
+  const [enteredCode, setEnteredCode] = useState("")
+  const [convertedCode, setConvertedCode] = useState("")
+  const [displayConvertedCode, setDisplayConvertedCode] = useState("")
+  const [errorApikey, setErrorApikey] = useState(false)
+  const [errorTextarea1, setErrorTextarea1] = useState(false)
+  const [copyText, setCopyText] = useState("Click textarea to copy")
 
-const samplePageLinks = [
-  {
-    text: "Page 2",
-    url: "page-2",
-    badge: false,
-    description:
-      "A simple example of linking to another page within a Gatsby site",
-  },
-  { text: "TypeScript", url: "using-typescript" },
-  { text: "Server Side Rendering", url: "using-ssr" },
-  { text: "Deferred Static Generation", url: "using-dsg" },
-]
+  const convertCode = (text, api) => {
+    if (text.trim().length > 0) {
+      const regex =
+        /<iframe .+!1s(.+)!.+!1d(-?[\d.]+)!2d(-?[\d.]+)!3f(-?[\d.]+)!4f(-?[\d.]+)!5f(-?[\d.]+).+<\/iframe>/
+      setConvertedCode(
+        text.replace(regex, (match, p1, p2, p3, p4, p5, p6) => {
+          const fov = 40 / parseFloat(p6)
+          return `<iframe src="https://www.google.com/maps/embed/v1/streetview?location=${p2}%2C${p3}&pano=${p1}&heading=${p4}&pitch=${p5}&fov=${fov}&key=${api}" width="600" height="450" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>`
+        })
+      )
+      const element = document.getElementById("Textarea2")
+      element.addEventListener("click", copyToClipboard)
+    } else {
+      setConvertedCode("")
+    }
+  }
 
-const moreLinks = [
-  { text: "Join us on Discord", url: "https://gatsby.dev/discord" },
-  {
-    text: "Documentation",
-    url: "https://gatsbyjs.com/docs/",
-  },
-  {
-    text: "Starters",
-    url: "https://gatsbyjs.com/starters/",
-  },
-  {
-    text: "Showcase",
-    url: "https://gatsbyjs.com/showcase/",
-  },
-  {
-    text: "Contributing",
-    url: "https://www.gatsbyjs.com/contributing/",
-  },
-  { text: "Issues", url: "https://github.com/gatsbyjs/gatsby/issues" },
-]
+  const apiKeyRegex = /^[A-Za-z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+$/
 
-const utmParameters = `?utm_source=starter&utm_medium=start-page&utm_campaign=default-starter`
+  const iframeRegex =
+    /<iframe src="https:\/\/www\.google\.com\/maps\/embed\?pb=!.+<\/iframe>/
 
-const IndexPage = () => (
-  <Layout>
-    <div className={styles.textCenter}>
-      <StaticImage
-        src="../images/example.png"
-        loading="eager"
-        width={64}
-        quality={95}
-        formats={["auto", "webp", "avif"]}
-        alt=""
-        style={{ marginBottom: `var(--space-3)` }}
-      />
-      <h1>
-        Welcome to <b>Gatsby!</b>
-      </h1>
-      <p className={styles.intro}>
-        <b>Example pages:</b>{" "}
-        {samplePageLinks.map((link, i) => (
-          <React.Fragment key={link.url}>
-            <Link to={link.url}>{link.text}</Link>
-            {i !== samplePageLinks.length - 1 && <> · </>}
-          </React.Fragment>
-        ))}
-        <br />
-        Edit <code>src/pages/index.js</code> to update this page.
+  //Copy to Clipboard
+  const copyToClipboard = async () => {
+    if (displayConvertedCode.trim().length > 0) {
+      await global.navigator.clipboard.writeText(displayConvertedCode)
+      setCopyText("Copied!")
+    } else {
+      return
+    }
+  }
+
+  const apiInputHandler = event => {
+    setEnteredApi(event.target.value)
+    setCopyText("Click textarea to copy")
+    if (apiKeyRegex.test(event.target.value)) {
+      setErrorApikey(false)
+      convertCode(enteredCode, event.target.value)
+    } else {
+      setErrorApikey(true)
+    }
+  }
+  const apiPasteHandler = event => {
+    event.preventDefault()
+    setEnteredApi(event.clipboardData.getData("text"))
+    setCopyText("Click textarea to copy")
+    if (apiKeyRegex.test(event.clipboardData.getData("text"))) {
+      setErrorApikey(false)
+      convertCode(enteredCode, event.clipboardData.getData("text"))
+    } else {
+      setErrorApikey(true)
+    }
+  }
+
+  const codeInputHandler = event => {
+    const inputValue = event.target.value
+    setEnteredCode(inputValue)
+    setCopyText("Click textarea to copy")
+    if (iframeRegex.test(inputValue)) {
+      convertCode(inputValue, enteredApi)
+      setErrorTextarea1(false)
+    } else {
+      setErrorTextarea1(true)
+    }
+  }
+  const pasteInputHandler = event => {
+    event.preventDefault()
+    const pastedValue = (event.clipboardData || window.Clipboard).getData(
+      "text"
+    )
+    setEnteredCode(pastedValue)
+    setCopyText("Click textarea to copy")
+    if (iframeRegex.test(pastedValue)) {
+      convertCode(pastedValue, enteredApi)
+      setErrorTextarea1(false)
+    } else {
+      setErrorTextarea1(true)
+    }
+  }
+
+  useEffect(() => {
+    setDisplayConvertedCode(convertedCode)
+  }, [enteredCode, convertedCode, enteredApi])
+
+  const resetHandler = () => {
+    setEnteredCode("")
+    setConvertedCode("")
+    setErrorTextarea1(false)
+    setCopyText("Click textarea to copy")
+  }
+
+  return (
+    <Layout>
+      <p>
+        Convert regular street view iframe embed code to Google Maps Embed API
+        format
       </p>
-    </div>
-    <ul className={styles.list}>
-      {links.map(link => (
-        <li key={link.url} className={styles.listItem}>
-          <a
-            className={styles.listItemLink}
-            href={`${link.url}${utmParameters}`}
-          >
-            {link.text} ↗
-          </a>
-          <p className={styles.listItemDescription}>{link.description}</p>
-        </li>
-      ))}
-    </ul>
-    {moreLinks.map((link, i) => (
-      <React.Fragment key={link.url}>
-        <a href={`${link.url}${utmParameters}`}>{link.text}</a>
-        {i !== moreLinks.length - 1 && <> · </>}
-      </React.Fragment>
-    ))}
-  </Layout>
-)
+      <form onSubmit={event => event.preventDefault()} className={styles.form}>
+        <div className={styles.formControl}>
+          <label htmlFor="Input1" className={styles.label}>
+            Your API
+          </label>
+          <input
+            type="text"
+            id="Input1"
+            value={enteredApi}
+            onChange={apiInputHandler}
+            onPaste={apiPasteHandler}
+          />
+          {errorApikey && <p style={{ color: "red" }}>Invalid API key</p>}
+        </div>
+        <div className={styles.formControl}>
+          <label htmlFor="Textarea1" className={styles.label}>
+            Input regular code
+          </label>{" "}
+          <button onClick={resetHandler}>Clear</button>
+          <textarea
+            id="Textarea1"
+            rows="5"
+            onChange={codeInputHandler}
+            onPaste={pasteInputHandler}
+            value={enteredCode}
+          />
+          {errorTextarea1 && <p style={{ color: "red" }}>Invalid code</p>}
+        </div>
+      </form>
+      <hr />
 
-/**
- * Head export to define metadata for the page
- *
- * See: https://www.gatsbyjs.com/docs/reference/built-in-components/gatsby-head/
- */
-export const Head = () => <Seo title="Home" />
+      <div className={styles.formControl}>
+        <label htmlFor="Textarea2" className={styles.label}>
+          Result
+        </label>{" "}
+        {copyText}
+        <textarea
+          id="Textarea2"
+          rows={5}
+          value={displayConvertedCode}
+          readOnly
+          onClick={copyToClipboard}
+        />
+      </div>
+    </Layout>
+  )
+}
+
+export const Head = () => <Seo title="Streetview Maps Embed API converter" />
 
 export default IndexPage
