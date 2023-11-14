@@ -121,6 +121,7 @@ const IndexPage = () => {
             value={enteredApi}
             onChange={apiInputHandler}
             onPaste={apiPasteHandler}
+            placeholder="AIzaSy..."
           />
           {errorApikey && <p style={{ color: "red" }}>Invalid API key</p>}
         </div>
@@ -135,6 +136,7 @@ const IndexPage = () => {
             onChange={codeInputHandler}
             onPaste={pasteInputHandler}
             value={enteredCode}
+            placeholder={`<iframe src="https://www.google.com/maps/embed?pb=..."></iframe>`}
           />
           {errorTextarea1 && <p style={{ color: "red" }}>Invalid code</p>}
         </div>
