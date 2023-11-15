@@ -19,7 +19,7 @@ const IndexPage = () => {
         /<iframe .+!1s(.+)!.+!1d(-?[\d.]+)!2d(-?[\d.]+)!3f(-?[\d.]+)!4f(-?[\d.]+)!5f(-?[\d.]+).+<\/iframe>/
       setConvertedCode(
         text.replace(regex, (match, p1, p2, p3, p4, p5, p6) => {
-          const fov = 40 / parseFloat(p6)
+          const fov = -23.593191040721845 * p6 + 93.45191850432671
           return `<iframe src="https://www.google.com/maps/embed/v1/streetview?location=${p2}%2C${p3}&pano=${p1}&heading=${p4}&pitch=${p5}&fov=${fov}&key=${api}" width="600" height="450" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>`
         })
       )
